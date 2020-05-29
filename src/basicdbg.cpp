@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <sstream>
 
-//#include "linenoise.h"
+#include "linenoise.h"
 
 class Debugger {
 public:
