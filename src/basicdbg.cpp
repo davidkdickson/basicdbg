@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/ptrace.h>
-//#include <sstream>
 
 #include "debugger.h"
 
@@ -16,9 +15,11 @@ int main(int argc, char *argv[])
   auto pid = fork();
 
   if (pid == 0) {
+    // child process
     ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
     execl(prog, prog, nullptr);
   } else if (pid >= 1) {
+    // parent process
     Debugger dbg {prog, pid};
     dbg.run();
   }
