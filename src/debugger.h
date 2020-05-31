@@ -1,5 +1,7 @@
 #include <string>
 #include <utility>
+#include <unordered_map>
+#include "breakpoint.h"
 
 class Debugger {
   public:
@@ -7,6 +9,7 @@ class Debugger {
       : m_prog_name{std::move(prog_name)}, m_pid{pid} {}
 
   void run();
+  void set_breakpoint(std::intptr_t addr);
 
   private:
   void handle_command(const std::string &line);
@@ -14,4 +17,5 @@ class Debugger {
 
   std::string m_prog_name;
   pid_t m_pid;
+  std::unordered_map<std::intptr_t, Breakpoint> m_breakpoints;
 };
