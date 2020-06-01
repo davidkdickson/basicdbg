@@ -49,6 +49,7 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
 
   if (is_prefix(command, "cont")) {
+    std::cout << "continuing execution..." << std::endl;
     continue_execution();
 
   } else if (is_prefix(command, "break")) {
