@@ -12,7 +12,7 @@ class Debugger {
   void set_breakpoint(std::intptr_t addr);
 
   private:
-  void handle_command(const std::string &line);
+  void handle_command(const std::string& line);
   void continue_execution();
 
   std::string m_prog_name;

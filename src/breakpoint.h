@@ -12,7 +12,7 @@ class Breakpoint {
   void enable();
   void disable();
 
-  auto is_enabled() const -> bool { return m_enabled; }
+  auto is_enabled() const { return m_enabled; }
   auto get_address() const -> std::intptr_t { return m_addr; }
 
   private:
