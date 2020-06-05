@@ -49,11 +49,10 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
 
   if (is_prefix(command, "cont")) {
-    std::cout << "continuing execution..." << std::endl;
     continue_execution();
 
   } else if (is_prefix(command, "break")) {
-    std::string addr{args[1], 2};
+    std::string addr {args[1], 2};
     set_breakpoint(std::stol(addr, 0, 16));
 
   } else {
@@ -62,6 +61,8 @@ void Debugger::handle_command(const std::string &line) {
 }
 
 void Debugger::continue_execution() {
+
+  std::cout << "Continuing execution of process: " << m_pid << std::endl;
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
 
   int wait_status;
@@ -70,9 +71,8 @@ void Debugger::continue_execution() {
 }
 
 void Debugger::set_breakpoint(std::intptr_t address) {
-  std::cout << "Set breakpoint at address 0x" << std::hex << address
-            << std::endl;
-  Breakpoint bp{m_pid, address};
+  Breakpoint bp(m_pid, address);
+  bp.print();
   bp.enable();
   m_breakpoints[address] = bp;
 }

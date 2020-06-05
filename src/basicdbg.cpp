@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     execl(prog, prog, nullptr);
   } else if (pid >= 1) {
     // parent process
+    std::cout << "Debugging process: " << pid << std::endl;
     Debugger dbg {prog, pid};
     dbg.run();
   }
