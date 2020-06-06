@@ -4,10 +4,13 @@
 
 #include "debugger.h"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+
 int main(int argc, char *argv[])
 {
   if (argc < 2) {
-    std::cerr << "Program not specified";
+    std::cerr << RED << "error: program not specified" << RESET << std::endl;
     return -1;
   }
 

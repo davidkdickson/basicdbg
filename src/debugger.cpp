@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "breakpoint.h"
-#include "linenoise.h"
+#include "../ext/linenoise/linenoise.h"
 
 std::vector<std::string> split(const std::string &s, char delimiter) {
   std::vector<std::string> out{};
