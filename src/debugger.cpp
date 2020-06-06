@@ -36,7 +36,7 @@ void Debugger::run() {
   waitpid(m_pid, &wait_status, options);
   char *line = nullptr;
 
-  while ((line = linenoise("basicdbg> ")) != nullptr) {
+  while ((line = linenoise(PROMPT)) != nullptr) {
     handle_command(line);
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
@@ -50,20 +50,21 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
 
   if (is_prefix(command, "cont")) {
+    std::cout << PROMPT << "continuing execution of process: " << m_pid << std::endl;
     continue_execution();
 
   } else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
+    std::cout << PROMPT << "setting breakpoint at: 0x" << addr << std::endl;
     set_breakpoint(std::stol(addr, 0, 16));
 
   } else {
-    std::cerr << "Unknown command\n";
+    std::cerr << PROMPT << "unknown command\n";
   }
 }
 
 void Debugger::continue_execution() {
 
-  std::cout << "Continuing execution of process: " << m_pid << std::endl;
   step_over_breakpoint();
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
 
@@ -74,7 +75,6 @@ void Debugger::continue_execution() {
 
 void Debugger::set_breakpoint(std::intptr_t address) {
   Breakpoint bp(m_pid, address);
-  bp.print();
   bp.enable();
   m_breakpoints[address] = bp;
 }
@@ -89,18 +89,15 @@ void Debugger::step_over_breakpoint() {
       return;
     }
 
-    std::cout << "at breakpoint" << std::endl;
-
     auto& bp = m_breakpoints[breakpoint_location];
 
     if(bp.is_enabled()) {
+      bp.disable();
       regs.rip = breakpoint_location;
       ptrace(PTRACE_SETREGS, m_pid, nullptr, &regs);
       ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
-      bp.disable();
       int wait_status;
       auto options = 0;
       waitpid(m_pid, &wait_status, options);
-      bp.enable();
     }
 }

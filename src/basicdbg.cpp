@@ -15,12 +15,10 @@ int main(int argc, char *argv[])
   auto pid = fork();
 
   if (pid == 0) {
-    // child process
     ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
     execl(prog, prog, nullptr);
   } else if (pid >= 1) {
-    // parent process
-    std::cout << "Debugging process: " << pid << std::endl;
+    std::cout << "basicdbg> debugging process: " << pid << std::endl;
     Debugger dbg {prog, pid};
     dbg.run();
   }

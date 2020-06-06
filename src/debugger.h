@@ -19,4 +19,6 @@ class Debugger {
   std::string m_prog_name;
   pid_t m_pid;
   std::unordered_map<std::intptr_t, Breakpoint> m_breakpoints;
+
+  inline static const char* PROMPT = "basicdbg> ";
 };

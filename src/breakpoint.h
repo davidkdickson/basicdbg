@@ -1,8 +1,6 @@
 #ifndef BREAKPOINT_CPP
 #define BREAKPOINT_CPP
 
-#include <cstdint>
-#include <sys/types.h>
 #include <iostream>
 
 class Breakpoint {
@@ -16,11 +14,6 @@ class Breakpoint {
 
   auto is_enabled() const { return m_enabled; }
   auto get_address() const -> std::intptr_t { return m_addr; }
-
-  void print() {
-    printf ("Process: %d\n", m_pid);
-    printf("Breakpoint: %p\n", (void*) m_addr);
-  }
 
   private:
   pid_t m_pid;
