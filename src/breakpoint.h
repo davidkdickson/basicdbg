@@ -19,6 +19,7 @@ class Breakpoint {
 
   void print() {
     printf ("Process: %d\n", m_pid);
+    printf("Breakpoint: %p\n", (void*) m_addr);
   }
 
   private:

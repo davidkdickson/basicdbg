@@ -4,8 +4,7 @@
 #include <iostream>
 
 void Breakpoint::enable() {
-  auto data = ptrace(PTRACE_PEEKDATA, m_pid, 0x11c, nullptr);
-  std::cout << data << std::endl;
+  auto data = ptrace(PTRACE_PEEKDATA, m_pid, m_addr, nullptr);
   m_saved_data = static_cast<uint8_t>(data & 0xff);
   uint64_t int3 = 0xcc;
   uint64_t data_with_int3 = ((data & ~0xff) | int3);

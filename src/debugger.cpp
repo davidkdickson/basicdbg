@@ -1,5 +1,6 @@
 #include "debugger.h"
 
+#include <sys/user.h>
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 
@@ -63,6 +64,7 @@ void Debugger::handle_command(const std::string &line) {
 void Debugger::continue_execution() {
 
   std::cout << "Continuing execution of process: " << m_pid << std::endl;
+  step_over_breakpoint();
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
 
   int wait_status;
@@ -75,4 +77,30 @@ void Debugger::set_breakpoint(std::intptr_t address) {
   bp.print();
   bp.enable();
   m_breakpoints[address] = bp;
+}
+
+void Debugger::step_over_breakpoint() {
+    struct user_regs_struct regs;
+    ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
+
+    auto breakpoint_location = regs.rip - 1;
+
+    if (!m_breakpoints.count(breakpoint_location)) {
+      return;
+    }
+
+    std::cout << "at breakpoint" << std::endl;
+
+    auto& bp = m_breakpoints[breakpoint_location];
+
+    if(bp.is_enabled()) {
+      regs.rip = breakpoint_location;
+      ptrace(PTRACE_SETREGS, m_pid, nullptr, &regs);
+      ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
+      bp.disable();
+      int wait_status;
+      auto options = 0;
+      waitpid(m_pid, &wait_status, options);
+      bp.enable();
+    }
 }

@@ -14,6 +14,7 @@ class Debugger {
   private:
   void handle_command(const std::string& line);
   void continue_execution();
+  void step_over_breakpoint();
 
   std::string m_prog_name;
   pid_t m_pid;
