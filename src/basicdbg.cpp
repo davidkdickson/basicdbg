@@ -1,8 +1,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/ptrace.h>
-#include<iostream>
-#include<fstream>
+#include <iostream>
+#include <fstream>
 
 #include "debugger.h"
 
