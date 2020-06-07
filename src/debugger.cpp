@@ -55,8 +55,9 @@ void Debugger::handle_command(const std::string &line) {
     continue_execution();
   } else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
-    std::cout << PROMPT << "setting breakpoint at: 0x" << addr << std::endl;
-    set_breakpoint(std::stol(addr, 0, 16));
+    uint64_t int_addr = std::stol(addr, 0, 16);
+    std::cout << PROMPT << "setting breakpoint at: 0x" << addr << "/" << std::hex << (int_addr + m_start_address)  << std::endl;
+    set_breakpoint(int_addr);
   } else if(is_prefix(command, "backtrace")) {
         print_backtrace();
   } else {
