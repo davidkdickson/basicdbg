@@ -56,7 +56,7 @@ void Debugger::handle_command(const std::string &line) {
   } else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
     uint64_t int_addr = std::stol(addr, 0, 16);
-    std::cout << PROMPT << "setting breakpoint at: 0x" << addr << "/" << std::hex << (int_addr + m_start_address)  << std::endl;
+    std::cout << PROMPT << "setting breakpoint at: 0x" << addr << "|0x" << std::hex << (int_addr + m_start_address)  << std::endl;
     set_breakpoint(int_addr);
   } else if(is_prefix(command, "backtrace")) {
         print_backtrace();
@@ -115,10 +115,11 @@ void Debugger::print_backtrace() {
 
     struct user_regs_struct regs;
     ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
-    uint64_t pc = regs.rip;
-    uint64_t frame_pointer = regs.rbp;
 
+    uint64_t pc = get_pc();
     auto current_func = get_function_from_pc(pc);
+
+    uint64_t frame_pointer = regs.rbp;
     output_frame(current_func);
 
     auto return_address = read_memory(frame_pointer+8);
@@ -136,9 +137,8 @@ uint64_t Debugger::read_memory(uint64_t address) {
 }
 
 dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
-    std::cout << std::hex << pc << std::endl;
+    pc -= m_start_address;
     for (auto &cu : m_dwarf.compilation_units()) {
-      std::cout <<  << std::endl;
         if (die_pc_range(cu.root()).contains(pc)) {
             for (const auto& die : cu.root()) {
                 if (die.tag == dwarf::DW_TAG::subprogram) {
@@ -150,5 +150,11 @@ dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
         }
     }
 
-    throw std::out_of_range{"Cannot find function"};
+    throw std::out_of_range{"cannot find function"};
+}
+
+uint64_t Debugger::get_pc() {
+  struct user_regs_struct regs;
+  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
+  return regs.rip;
 }

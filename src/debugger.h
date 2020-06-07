@@ -30,6 +30,7 @@ class Debugger {
   void step_over_breakpoint();
   void print_backtrace();
   uint64_t read_memory(uint64_t addr);
+  uint64_t get_pc();
   dwarf::die get_function_from_pc(uint64_t pc);
 
   std::string m_prog_name;
