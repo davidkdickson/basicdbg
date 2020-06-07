@@ -51,7 +51,7 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
 
   if (is_prefix(command, "cont")) {
-    std::cout << PROMPT << "continuing execution of process: " << m_pid << std::endl;
+    std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
     continue_execution();
   } else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
@@ -138,6 +138,7 @@ uint64_t Debugger::read_memory(uint64_t address) {
 dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
     std::cout << std::hex << pc << std::endl;
     for (auto &cu : m_dwarf.compilation_units()) {
+      std::cout <<  << std::endl;
         if (die_pc_range(cu.root()).contains(pc)) {
             for (const auto& die : cu.root()) {
                 if (die.tag == dwarf::DW_TAG::subprogram) {
