@@ -1,5 +1,7 @@
+CC=g++
+
 basidbg: linenoise.o
-	g++ -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o -o basicdbg -Iext/linenoise
+	$(CC) -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o ext/libelfin/elf/libelf++.a ext/libelfin/dwarf/libdwarf++.a -o basicdbg
 
 linenoise.o:
 	gcc -c ext/linenoise/linenoise.c -o build/linenoise.o
@@ -7,4 +9,3 @@ linenoise.o:
 clean:
 	rm build/*
 	rm basicdbg
-

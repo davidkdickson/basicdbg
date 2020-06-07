@@ -11,6 +11,7 @@
 
 #include "breakpoint.h"
 #include "../ext/linenoise/linenoise.h"
+#include "../ext/libelfin/dwarf/dwarf++.hh"
 
 std::vector<std::string> split(const std::string &s, char delimiter) {
   std::vector<std::string> out{};
@@ -52,12 +53,12 @@ void Debugger::handle_command(const std::string &line) {
   if (is_prefix(command, "cont")) {
     std::cout << PROMPT << "continuing execution of process: " << m_pid << std::endl;
     continue_execution();
-
   } else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
     std::cout << PROMPT << "setting breakpoint at: 0x" << addr << std::endl;
     set_breakpoint(std::stol(addr, 0, 16));
-
+  } else if(is_prefix(command, "backtrace")) {
+        print_backtrace();
   } else {
     std::cerr << PROMPT << "unknown command\n";
   }
@@ -74,9 +75,11 @@ void Debugger::continue_execution() {
 }
 
 void Debugger::set_breakpoint(std::intptr_t address) {
-  Breakpoint bp(m_pid, address);
+  uint64_t addr = address + m_start_address;
+
+  Breakpoint bp(m_pid, addr);
   bp.enable();
-  m_breakpoints[address] = bp;
+  m_breakpoints[addr] = bp;
 }
 
 void Debugger::step_over_breakpoint() {
@@ -100,4 +103,50 @@ void Debugger::step_over_breakpoint() {
       auto options = 0;
       waitpid(m_pid, &wait_status, options);
     }
+}
+
+void Debugger::print_backtrace() {
+
+    auto output_frame = [frame_number = 0] (auto&& func) mutable {
+        std::cout << "frame #" << frame_number++ << ": 0x" << dwarf::at_low_pc(func)
+                  << ' ' << dwarf::at_name(func) << std::endl;
+    };
+
+    struct user_regs_struct regs;
+    ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
+    uint64_t pc = regs.rip;
+    uint64_t frame_pointer = regs.rbp;
+
+    auto current_func = get_function_from_pc(pc);
+    output_frame(current_func);
+
+    auto return_address = read_memory(frame_pointer+8);
+
+    while (dwarf::at_name(current_func) != "main") {
+        current_func = get_function_from_pc(return_address);
+        output_frame(current_func);
+        frame_pointer = read_memory(frame_pointer);
+        return_address = read_memory(frame_pointer+8);
+    }
+}
+
+uint64_t Debugger::read_memory(uint64_t address) {
+    return ptrace(PTRACE_PEEKDATA, m_pid, address, nullptr);
+}
+
+dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
+    std::cout << std::hex << pc << std::endl;
+    for (auto &cu : m_dwarf.compilation_units()) {
+        if (die_pc_range(cu.root()).contains(pc)) {
+            for (const auto& die : cu.root()) {
+                if (die.tag == dwarf::DW_TAG::subprogram) {
+                    if (die_pc_range(die).contains(pc)) {
+                        return die;
+                    }
+                }
+            }
+        }
+    }
+
+    throw std::out_of_range{"Cannot find function"};
 }

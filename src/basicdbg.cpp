@@ -1,6 +1,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/ptrace.h>
+#include<iostream>
+#include<fstream>
 
 #include "debugger.h"
 
@@ -22,7 +24,21 @@ int main(int argc, char *argv[])
     execl(prog, prog, nullptr);
   } else if (pid >= 1) {
     std::cout << "basicdbg> debugging process: " << pid << std::endl;
-    Debugger dbg {prog, pid};
+    std::string file = "/proc/" + std::to_string(pid) + "/maps";
+    std::ifstream infile(file);
+    std::string sLine;
+
+    if (infile.good())
+    {
+      getline(infile, sLine);
+    }
+
+    infile.close();
+    char *p;
+
+    uint64_t start_address = strtol(sLine.substr(0, 12).c_str(), &p, 16);
+
+    Debugger dbg {prog, pid, start_address};
     dbg.run();
   }
 
