@@ -16,3 +16,6 @@ https://www.linuxjournal.com/article/6210
 
 https://jvns.ca/blog/2018/01/09/resolving-symbol-addresses/
 
+
+break 0x11b2
+register set rip 0x1189

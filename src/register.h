@@ -6,20 +6,20 @@
 #include <sys/user.h>
 #include <sys/types.h>
 #include <sys/ptrace.h>
+#include <iostream>
 
 enum class Register {
         rax, rbx, rcx, rdx,
         rdi, rsi, rbp, rsp,
         r8,  r9,  r10, r11,
         r12, r13, r14, r15,
-        rip, rflags,    cs,
+        rip, rflags, cs,
         orig_rax, fs_base,
         gs_base,
         fs, gs, ss, ds, es
     };
 
 Register get_register_from_name(const std::string& name) {
-
   if (name == "rip") {
     return Register::rip;
   }
