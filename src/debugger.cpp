@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "breakpoint.h"
+#include "register.h"
 #include "../ext/linenoise/linenoise.h"
 #include "../ext/libelfin/dwarf/dwarf++.hh"
 
@@ -53,7 +54,17 @@ void Debugger::handle_command(const std::string &line) {
   if (is_prefix(command, "cont")) {
     std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
     continue_execution();
-  } else if (is_prefix(command, "break")) {
+  } else if(is_prefix(command, "register")) {
+    if (is_prefix(args[1], "dump")) {
+
+    } else if (is_prefix(args[1], "read")) {
+      std::cout << PROMPT << std::hex << "0x" << get_register_value(m_pid, get_register_from_name(args[2])) << std::endl;
+    } else if (is_prefix(args[1], "write")) {
+      std::string val {args[3], 2};
+      set_register_value(m_pid, get_register_from_name(args[2]), std::stol(val, 0, 16));
+    }
+  }
+  else if (is_prefix(command, "break")) {
     std::string addr {args[1], 2};
     uint64_t int_addr = std::stol(addr, 0, 16);
     std::cout << PROMPT << "setting breakpoint at: 0x" << addr << "|0x" << std::hex << (int_addr + m_start_address)  << std::endl;
