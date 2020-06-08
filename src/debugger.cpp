@@ -131,13 +131,11 @@ void Debugger::print_backtrace() {
               << ' ' << dwarf::at_name(func) << std::endl;
   };
 
-  struct user_regs_struct regs;
-  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
 
-  uint64_t pc = get_pc();
+  uint64_t pc = get_register_value(m_pid, Register::rip);
   auto current_func = get_function_from_pc(pc);
 
-  uint64_t frame_pointer = regs.rbp;
+  uint64_t frame_pointer = get_register_value(m_pid, Register::rbp);
   output_frame(current_func);
 
   auto return_address = read_memory(frame_pointer + 8);
@@ -171,8 +169,3 @@ dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
   throw std::out_of_range{"cannot find function"};
 }
 
-uint64_t Debugger::get_pc() {
-  struct user_regs_struct regs;
-  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
-  return regs.rip;
-}

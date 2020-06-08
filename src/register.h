@@ -20,8 +20,12 @@ enum class Register {
     };
 
 Register get_register_from_name(const std::string& name) {
+
   if (name == "rip") {
     return Register::rip;
+  }
+  if (name == "rbp") {
+    return Register::rbp;
   }
 
   return Register::rip;
@@ -34,6 +38,8 @@ uint64_t get_register_value(pid_t pid, Register r) {
   switch (r) {
     case Register::rip:
       return regs.rip;
+    case Register::rbp:
+      return regs.rbp;
     default:
       return 0;
 
@@ -47,6 +53,9 @@ void set_register_value(pid_t pid, Register r, uint64_t value) {
   switch (r) {
     case Register::rip:
       regs.rip = value;
+      break;
+    case Register::rbp:
+      regs.rbp = value;
       break;
     default:
       break;
