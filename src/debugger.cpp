@@ -33,9 +33,8 @@ bool is_prefix(const std::string &s, const std::string &of) {
 
 void Debugger::run() {
   // waiting for child process to finish launching
-  int wait_status;
-  auto options = 0;
-  waitpid(m_pid, &wait_status, options);
+  wait_for_signal();
+
   char *line = nullptr;
 
   while ((line = linenoise(PROMPT)) != nullptr) {
@@ -88,10 +87,7 @@ void Debugger::handle_command(const std::string &line) {
 void Debugger::continue_execution() {
   step_over_breakpoint();
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
-
-  int wait_status;
-  auto options = 0;
-  waitpid(m_pid, &wait_status, options);
+  wait_for_signal();
 }
 
 void Debugger::set_breakpoint(std::intptr_t address) {
@@ -103,10 +99,7 @@ void Debugger::set_breakpoint(std::intptr_t address) {
 }
 
 void Debugger::step_over_breakpoint() {
-  struct user_regs_struct regs;
-  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
-
-  auto breakpoint_location = regs.rip - 1;
+  auto breakpoint_location = get_register_value(m_pid, Register::rip) - 1;
 
   if (!m_breakpoints.count(breakpoint_location)) {
     return;
@@ -116,13 +109,16 @@ void Debugger::step_over_breakpoint() {
 
   if (bp.is_enabled()) {
     bp.disable();
-    regs.rip = breakpoint_location;
-    ptrace(PTRACE_SETREGS, m_pid, nullptr, &regs);
+    set_register_value(m_pid, Register::rip, breakpoint_location);
     ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
+    wait_for_signal();
+  }
+}
+
+void Debugger::wait_for_signal() {
     int wait_status;
     auto options = 0;
     waitpid(m_pid, &wait_status, options);
-  }
 }
 
 void Debugger::print_backtrace() {
