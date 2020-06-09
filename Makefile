@@ -6,6 +6,9 @@ basidbg: linenoise.o
 linenoise.o:
 	gcc -c ext/linenoise/linenoise.c -o build/linenoise.o
 
+hello:
+	$(CC) -g examples/hello.cpp -o examples/hello
+
 clean:
 	rm build/*
 	rm basicdbg
