@@ -9,6 +9,8 @@ linenoise.o:
 hello:
 	$(CC) -g examples/hello.cpp -o examples/hello
 
+stack_trace:
+	$(CC) -g examples/stack_trace.cpp -o examples/stack_trace
 clean:
 	rm build/*
 	rm basicdbg
