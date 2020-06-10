@@ -6,8 +6,11 @@
 #include <signal.h>
 #include <fcntl.h>
 
+
 #include "../ext/libelfin/dwarf/dwarf++.hh"
 #include "../ext/libelfin/elf/elf++.hh"
+
+#include <signal.h>
 
 #include "breakpoint.h"
 
@@ -36,6 +39,7 @@ class Debugger {
   bool find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack);
   void dump_die(const dwarf::die &node);
   void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context = 2);
+  siginfo_t get_signal_info();
 
   std::string m_prog_name;
   pid_t m_pid;
