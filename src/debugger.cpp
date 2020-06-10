@@ -39,7 +39,6 @@ bool is_prefix(const std::string &s, const std::string &of) {
 }
 
 void Debugger::run() {
-  // waiting for child process to finish launching
   wait_for_signal();
 
   char *line = nullptr;
@@ -92,7 +91,7 @@ void Debugger::handle_command(const std::string &line) {
   } else if (is_prefix(command, "line")) {
     std::string addr_s{args[1], 2};
     addr = std::stol(addr_s, 0, 16);
-    auto line_entry = get_line_entry_from_pc(get_register_value(m_pid, Register::rip));
+    auto line_entry = get_line_entry_from_pc(addr);
     print_source(line_entry->file->path, line_entry->line);
   } else {
     std::cerr << PROMPT << "unknown command\n";
@@ -136,71 +135,8 @@ void Debugger::wait_for_signal() {
     waitpid(m_pid, &wait_status, options);
 }
 
-void Debugger::print_backtrace() {
-  // auto output_frame = [frame_number = 0](auto &&func) mutable {
-  //   std::cout << "frame #" << frame_number++ << ": 0x" << dwarf::at_low_pc(func)
-  //             << ' ' << dwarf::at_name(func) << std::endl;
-  // };
-
-
-  // uint64_t pc = get_register_value(m_pid, Register::rip);
-  // auto current_func = get_function_from_pc(pc);
-
-  // uint64_t frame_pointer = get_register_value(m_pid, Register::rbp);
-  // output_frame(current_func);
-
-  // auto return_address = read_memory(frame_pointer + 8);
-
-  // while (dwarf::at_name(current_func) != "main") {
-  //   current_func = get_function_from_pc(return_address);
-  //   output_frame(current_func);
-  //   frame_pointer = read_memory(frame_pointer);
-  //   return_address = read_memory(frame_pointer + 8);
-  // }
-}
-
 uint64_t Debugger::read_memory(uint64_t address) {
   return ptrace(PTRACE_PEEKDATA, m_pid, address, nullptr);
-}
-
-
-bool find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack)
-{
-        using namespace dwarf;
-
-        // Scan children first to find most specific DIE
-        bool found = false;
-        for (auto &child : d) {
-                if ((found = find_pc(child, pc, stack)))
-                        break;
-        }
-        switch (d.tag) {
-        case DW_TAG::subprogram:
-        case DW_TAG::inlined_subroutine:
-                try {
-                        if (found || die_pc_range(d).contains(pc)) {
-                                found = true;
-                                stack->push_back(d);
-                        }
-                } catch (std::out_of_range &e) {
-                } catch (value_type_mismatch &e) {
-                }
-                break;
-        default:
-                break;
-        }
-        return found;
-}
-
-void dump_die(const dwarf::die &node)
-{
-        printf("<%" PRIx64 "> %s\n",
-               node.get_section_offset(),
-               to_string(node.tag).c_str());
-        for (auto &attr : node.attributes())
-                printf("      %s %s\n",
-                       to_string(attr.first).c_str(),
-                       to_string(attr.second).c_str());
 }
 
 
@@ -236,20 +172,57 @@ dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
 }
 
 dwarf::line_table::iterator Debugger::get_line_entry_from_pc(uint64_t pc) {
-    for (auto &cu : m_dwarf.compilation_units()) {
-        if (die_pc_range(cu.root()).contains(pc)) {
-            auto &lt = cu.get_line_table();
-            auto it = lt.find_address(pc);
-            if (it == lt.end()) {
-                throw std::out_of_range{"Cannot find line entry"};
-            }
-            else {
-                return it;
-            }
-        }
+  for (auto &cu : m_dwarf.compilation_units()) {
+    if (die_pc_range(cu.root()).contains(pc)) {
+      auto &lt = cu.get_line_table();
+      auto it = lt.find_address(pc);
+      if (it == lt.end())
+        printf("UNKNOWN\n");
+      else {
+        printf("%s\n", it->get_description().c_str());
+        return it;
+      }
     }
+  }
+}
 
-    throw std::out_of_range{"Cannot find line entry"};
+void Debugger::dump_die(const dwarf::die &node)
+{
+        printf("<%" PRIx64 "> %s\n",
+               node.get_section_offset(),
+               to_string(node.tag).c_str());
+        for (auto &attr : node.attributes())
+                printf("      %s %s\n",
+                       to_string(attr.first).c_str(),
+                       to_string(attr.second).c_str());
+}
+
+bool Debugger::find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack)
+{
+        using namespace dwarf;
+
+        // Scan children first to find most specific DIE
+        bool found = false;
+        for (auto &child : d) {
+                if ((found = find_pc(child, pc, stack)))
+                        break;
+        }
+        switch (d.tag) {
+        case DW_TAG::subprogram:
+        case DW_TAG::inlined_subroutine:
+                try {
+                        if (found || die_pc_range(d).contains(pc)) {
+                                found = true;
+                                stack->push_back(d);
+                        }
+                } catch (std::out_of_range &e) {
+                } catch (value_type_mismatch &e) {
+                }
+                break;
+        default:
+                break;
+        }
+        return found;
 }
 
 void Debugger::print_source(const std::string& file_name, unsigned line, unsigned n_lines_context) {

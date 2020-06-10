@@ -33,6 +33,8 @@ class Debugger {
   uint64_t read_memory(uint64_t addr);
   dwarf::die get_function_from_pc(uint64_t pc);
   dwarf::line_table::iterator get_line_entry_from_pc(uint64_t pc);
+  bool find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack);
+  void dump_die(const dwarf::die &node);
   void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context = 2);
 
   std::string m_prog_name;
