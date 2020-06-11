@@ -40,6 +40,7 @@ class Debugger {
   void dump_die(const dwarf::die &node);
   void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context = 2);
   siginfo_t get_signal_info();
+  void handle_sigtrap(siginfo_t info);
 
   std::string m_prog_name;
   pid_t m_pid;

@@ -113,7 +113,7 @@ void Debugger::set_breakpoint(std::intptr_t address) {
 }
 
 void Debugger::step_over_breakpoint() {
-  auto breakpoint_location = get_register_value(m_pid, Register::rip) - 1;
+  auto breakpoint_location = get_register_value(m_pid, Register::rip);
 
   if (!m_breakpoints.count(breakpoint_location)) {
     return;
@@ -130,38 +130,23 @@ void Debugger::step_over_breakpoint() {
 }
 
 void Debugger::wait_for_signal() {
-    int wait_status;
-    auto options = 0;
-    waitpid(m_pid, &wait_status, options);
-    auto info = get_signal_info();
+  int wait_status;
+  auto options = 0;
+  waitpid(m_pid, &wait_status, options);
 
-    switch (info.si_signo) {
-      case SIGTRAP:
-        switch (info.si_code) {
-          //one of these will be set if a breakpoint was hit
-          case SI_KERNEL:
-          case TRAP_BRKPT:
-            {
-              auto pc = get_register_value(m_pid, Register::rip);
-              set_register_value(m_pid, Register::rip, pc - 1);
-              std::cout << "Hit breakpoint at address 0x" << std::hex << (pc - m_start_address) << std::endl;
-              auto line_entry = get_line_entry_from_pc(pc - m_start_address);
-              print_source(line_entry->file->path, line_entry->line);
-              return;
-            }
-            //this will be set if the signal was sent by single stepping
-          case TRAP_TRACE:
-            return;
-          default:
-            std::cout << "Unknown SIGTRAP code " << info.si_code << std::endl;
-        }
-        break;
-      case SIGSEGV:
-        std::cout << "Yay, segfault. Reason: " << info.si_code << std::endl;
-        break;
-      default:
-        std::cout << "Got signal " << strsignal(info.si_signo) << std::endl;
-    }
+  auto siginfo = get_signal_info();
+
+  switch (siginfo.si_signo) {
+    case SIGTRAP:
+      handle_sigtrap(siginfo);
+      break;
+    case SIGSEGV:
+      std::cout << "Yay, segfault. Reason: " << siginfo.si_code << std::endl;
+      break;
+    default:
+      std::cout << "Got signal " << strsignal(siginfo.si_signo) << std::endl;
+  }
+
 }
 
 uint64_t Debugger::read_memory(uint64_t address) {
@@ -292,3 +277,29 @@ siginfo_t Debugger::get_signal_info() {
     ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &info);
     return info;
 }
+
+void Debugger::handle_sigtrap(siginfo_t info) {
+    switch (info.si_code) {
+    //one of these will be set if a breakpoint was hit
+    case SI_KERNEL:
+    case TRAP_BRKPT:
+    {
+              auto pc = get_register_value(m_pid, Register::rip);
+              set_register_value(m_pid, Register::rip, pc - 1);
+              std::cout << "Hit breakpoint at address 0x"
+                  << std::hex << (pc - 1 - m_start_address)
+                  << "|0x" << (pc-1)
+                  << std::endl;
+              auto line_entry = get_line_entry_from_pc(pc - m_start_address);
+              print_source(line_entry->file->path, line_entry->line);
+              return;
+    }
+    //this will be set if the signal was sent by single stepping
+    case TRAP_TRACE:
+        return;
+    default:
+        std::cout << "Unknown SIGTRAP code " << info.si_code << std::endl;
+        return;
+    }
+}
+
