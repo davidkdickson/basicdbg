@@ -1,10 +1,13 @@
 CC=g++
 
-basidbg: linenoise.o
-	$(CC) -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o ext/libelfin/elf/libelf++.a ext/libelfin/dwarf/libdwarf++.a -o basicdbg
+basidbg: linenoise.o libelfin
+	$(CC) -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o libs/libelfin/elf/libelf++.so libs/libelfin/dwarf/libdwarf++.so -o basicdbg
+
+libelfin:
+	$(MAKE) -C libs/libelfin
 
 linenoise.o:
-	gcc -c ext/linenoise/linenoise.c -o build/linenoise.o
+	gcc -c libs/linenoise/linenoise.c -o build/linenoise.o
 
 hello:
 	$(CC) -g examples/hello.cpp -o examples/hello

@@ -7,8 +7,8 @@
 #include <fcntl.h>
 
 
-#include "../ext/libelfin/dwarf/dwarf++.hh"
-#include "../ext/libelfin/elf/elf++.hh"
+#include "../libs/libelfin/dwarf/dwarf++.hh"
+#include "../libs/libelfin/elf/elf++.hh"
 
 #include <signal.h>
 

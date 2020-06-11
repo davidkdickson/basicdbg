@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#include "../ext/libelfin/dwarf/dwarf++.hh"
-#include "../ext/linenoise/linenoise.h"
+#include "../libs/libelfin/dwarf/dwarf++.hh"
+#include "../libs/linenoise/linenoise.h"
 #include "breakpoint.h"
 #include "register.h"
 
