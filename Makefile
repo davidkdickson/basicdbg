@@ -1,7 +1,7 @@
 CC=g++
 
-basidbg: linenoise.o libelfin
-	$(CC) -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o libs/libelfin/elf/libelf++.so libs/libelfin/dwarf/libdwarf++.so -o basicdbg
+basidbg: linenoise.o
+	$(CC) -Wall -std=c++17 src/basicdbg.cpp src/debugger.cpp src/breakpoint.cpp build/linenoise.o libs/libelfin/elf/libelf++.a libs/libelfin/dwarf/libdwarf++.a -o basicdbg
 
 libelfin:
 	$(MAKE) -C libs/libelfin
