@@ -19,3 +19,7 @@ https://jvns.ca/blog/2018/01/09/resolving-symbol-addresses/
 
 break 0x11b2
 register set rip 0x1189
+
+https://amir.rachum.com/blog/2016/09/17/shared-libraries/
+
+ldd basicdbg
