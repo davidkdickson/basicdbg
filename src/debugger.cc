@@ -55,15 +55,13 @@ void Debugger::handle_command(const std::string &line) {
   uint64_t addr;
 
   if (is_prefix(command, "cont")) {
-    std::cout << PROMPT << "continuing execution of process: " << std::dec
-              << m_pid << std::endl;
+    std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
     continue_execution();
   } else if (is_prefix(command, "register")) {
-    if (is_prefix(args[1], "dump")) {
-    } else if (is_prefix(args[1], "get")) {
+    if (is_prefix(args[1], "get")) {
       addr = get_register_value(m_pid, get_register_from_name(args[2]));
       std::cout << PROMPT << std::hex << "register " << args[2] << " : "
-                << "0x" << addr - m_start_address << "|0x" << addr << std::endl;
+          << "0x" << addr - m_start_address << "|0x" << addr << std::endl;
     } else if (is_prefix(args[1], "set")) {
       std::string val{args[3], 2};
       addr = std::stol(val, 0, 16) + m_start_address;
