@@ -31,7 +31,6 @@ class Debugger {
   void set_breakpoint(std::intptr_t addr);
   void continue_execution();
   void step_over_breakpoint();
-  void print_backtrace();
   void wait_for_signal();
   uint64_t read_memory(uint64_t addr);
   dwarf::die get_function_from_pc(uint64_t pc);
