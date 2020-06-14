@@ -141,10 +141,6 @@ void Debugger::wait_for_signal() {
   }
 }
 
-uint64_t Debugger::read_memory(uint64_t address) {
-  return ptrace(PTRACE_PEEKDATA, m_pid, address, nullptr);
-}
-
 dwarf::die Debugger::get_function_from_pc(uint64_t pc) {
   for (auto &cu : m_dwarf.compilation_units()) {
     if (die_pc_range(cu.root()).contains(pc)) {

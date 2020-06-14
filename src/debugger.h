@@ -32,9 +32,8 @@ class Debugger {
   void continue_execution();
   void step_over_breakpoint();
   void wait_for_signal();
-  uint64_t read_memory(uint64_t addr);
-  dwarf::die get_function_from_pc(uint64_t pc);
-  dwarf::line_table::iterator get_line_entry_from_pc(uint64_t pc);
+  dwarf::die get_function_from_pc(uint64_t pc); // debug info
+  dwarf::line_table::iterator get_line_entry_from_pc(uint64_t pc); // debug info
   bool find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack);
   void dump_die(const dwarf::die &node);
   void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context = 2);
