@@ -23,3 +23,5 @@ register set rip 0x1189
 https://amir.rachum.com/blog/2016/09/17/shared-libraries/
 
 ldd basicdbg
+
+https://thoughtbot.com/blog/vim-you-complete-me
