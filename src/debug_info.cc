@@ -9,10 +9,11 @@ dwarf::die DebugInfo::get_function_from_pc(uint64_t pc) {
       // Map PC to a line
       auto &lt = cu.get_line_table();
       auto it = lt.find_address(pc);
+
       if (it == lt.end())
-        printf("UNKNOWN\n");
+        std::cout << "unknown" << std::endl;
       else
-        printf("%s\n", it->get_description().c_str());
+        std::cout << it->get_description().c_str() << std::endl;
 
       // Map PC to an object
       // XXX Index/helper/something for looking up PCs
@@ -39,17 +40,17 @@ dwarf::line_table::iterator DebugInfo::get_line_entry_from_pc(uint64_t pc) {
       auto &lt = cu.get_line_table();
       auto it = lt.find_address(pc);
       if (it == lt.end())
-        printf("UNKNOWN\n");
+        std::cout << "unknown" << std::endl;
       else {
-        printf("%s\n", it->get_description().c_str());
+        std::cout << it->get_description().c_str() << std::endl;
         return it;
       }
     }
   }
   throw std::out_of_range{"Cannot find line"};
 }
-bool DebugInfo::find_pc(const dwarf::die &d, dwarf::taddr pc,
-                       std::vector<dwarf::die> *stack) {
+
+bool DebugInfo::find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf::die> *stack) {
   using namespace dwarf;
 
   // Scan children first to find most specific DIE
@@ -89,8 +90,7 @@ void DebugInfo::print_source(const std::string &file_name, unsigned line, unsign
 
   // Work out a window around the desired line
   auto start_line = line <= n_lines_context ? 1 : line - n_lines_context;
-  auto end_line = line + n_lines_context +
-                  (line < n_lines_context ? n_lines_context - line : 0) + 1;
+  auto end_line = line + n_lines_context + (line < n_lines_context ? n_lines_context - line : 0) + 1;
 
   char c{};
   auto current_line = 1u;

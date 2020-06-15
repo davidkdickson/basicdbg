@@ -25,9 +25,7 @@ class DebugInfo {
   }
 
   dwarf::die get_function_from_pc(uint64_t pc);
-
   dwarf::line_table::iterator get_line_entry_from_pc(uint64_t pc);
-
   void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context = 2);
 };
 #endif /* DEBUG_INFO_H */
