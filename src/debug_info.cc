@@ -24,7 +24,6 @@ dwarf::die DebugInfo::get_function_from_pc(uint64_t pc) {
         for (auto &d : stack) {
           if (!first) printf("\nInlined in:\n");
           first = false;
-          dump_die(d);
           return d;
         }
       }
@@ -75,15 +74,6 @@ bool DebugInfo::find_pc(const dwarf::die &d, dwarf::taddr pc, std::vector<dwarf:
   }
   return found;
 }
-
-void DebugInfo::dump_die(const dwarf::die &node) {
-  printf("<%" PRIx64 "> %s\n", node.get_section_offset(),
-         to_string(node.tag).c_str());
-  for (auto &attr : node.attributes())
-    printf("      %s %s\n", to_string(attr.first).c_str(),
-           to_string(attr.second).c_str());
-}
-
 
 void DebugInfo::print_source(const std::string &file_name, unsigned line, unsigned n_lines_context) {
   std::ifstream file{file_name};
