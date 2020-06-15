@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "debugger.h"
+#include "debug_info.h"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
@@ -38,7 +39,8 @@ int main(int argc, char *argv[])
 
     uint64_t start_address = strtol(sLine.substr(0, 12).c_str(), &p, 16);
 
-    Debugger dbg {prog, pid, start_address};
+    DebugInfo debug_info(prog);
+    Debugger dbg {pid, start_address, debug_info};
     dbg.run();
   }
 

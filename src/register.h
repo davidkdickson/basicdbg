@@ -1,12 +1,9 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
 
-#include <cstdint>
 #include <string>
 #include <sys/user.h>
-#include <sys/types.h>
 #include <sys/ptrace.h>
-#include <iostream>
 
 enum class Register {
         rax, rbx, rcx, rdx,
