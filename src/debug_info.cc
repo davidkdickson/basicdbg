@@ -15,9 +15,6 @@ dwarf::die DebugInfo::get_function_from_pc(uint64_t pc) {
       else
         std::cout << it->get_description().c_str() << std::endl;
 
-      // Map PC to an object
-      // XXX Index/helper/something for looking up PCs
-      // XXX DW_AT_specification and DW_AT_abstract_origin
       std::vector<dwarf::die> stack;
       if (find_pc(cu.root(), pc, &stack)) {
         bool first = true;

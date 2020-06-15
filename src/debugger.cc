@@ -44,8 +44,7 @@ void Debugger::handle_command(const std::string &line) {
   uint64_t addr;
 
   if (is_prefix(command, "cont")) {
-    std::cout << PROMPT << "continuing execution of process: " << std::dec
-              << m_pid << std::endl;
+    std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
     continue_execution();
   } else if (is_prefix(command, "register")) {
     if (is_prefix(args[1], "get")) {
@@ -69,10 +68,7 @@ void Debugger::handle_command(const std::string &line) {
     std::string addr_s{args[1], 2};
     addr = std::stol(addr_s, 0, 16);
     auto die = m_debug_info.get_function_from_pc(addr);
-    //die.attributes()DW_AT::name
     std::cout << die.resolve(dwarf::DW_AT::name).as_string() << std::endl;
-
-
   } else if (is_prefix(command, "line")) {
     std::string addr_s{args[1], 2};
     addr = std::stol(addr_s, 0, 16);
