@@ -2,9 +2,9 @@
 
 int main()
 {
-  std::cerr << "hello world 1 \n";
-  std::cerr << "hello world 2 \n";
-  std::cerr << "hello world 3 \n";
+  int x = 0;
+  x = 1;
+  x = 2;
 
   return 0;
 }

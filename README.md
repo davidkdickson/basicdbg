@@ -26,3 +26,25 @@ ldd basicdbg
 - step over
 - step out
 - print back trace
+
+//  int wait_status;
+//  unsigned icounter = 0;
+//  std::cout << "single step"  << std::endl;
+//  waitpid(m_pid, &wait_status, 0);
+//
+//  while (WIFSTOPPED(wait_status)) {
+//    auto addr = get_register_value(m_pid, Register::rip);
+//    if((addr - m_start_address) == 0x1189)
+//      std::cout << "start of program" << std::endl;
+//    //std::cout << std::hex << "0x" << addr - m_start_address << "|0x" << addr << std::endl;
+//    icounter++;
+//    if (ptrace(PTRACE_SINGLESTEP, m_pid, 0, 0) < 0) {
+//      std::cout << "step error"  << std::endl;
+//      return;
+//    }
+//    waitpid(m_pid, &wait_status, 0);
+//  }
+//
+//  std::cout << icounter << std::endl;
+//  return;
+

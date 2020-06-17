@@ -24,12 +24,39 @@ bool is_prefix(const std::string &s, const std::string &of) {
   return std::equal(s.begin(), s.end(), of.begin());
 }
 
-void Debugger::run() {
+void Debugger::single_step_instruction() {
+  ptrace(PTRACE_SINGLESTEP, m_pid, 0, 0);
   wait_for_signal();
+}
+
+void Debugger::step_over_breakpoint() {
+  if (m_breakpoints.count(get_pc(m_pid))) {
+    auto& bp = m_breakpoints[get_pc(m_pid)];
+    if (bp.is_enabled()) {
+      bp.disable();
+      single_step_instruction();
+      bp.enable();
+    }
+  }
+}
+
+void Debugger::single_step_instruction_with_breakpoint_check() {
+    if (m_breakpoints.count(get_pc(m_pid))) {
+        step_over_breakpoint();
+    }
+    else {
+        single_step_instruction();
+    }
+}
+
+void Debugger::run() {
+   wait_for_signal();
 
   char *line = nullptr;
 
   while ((line = linenoise(PROMPT)) != nullptr) {
+    auto pc = get_pc(m_pid);
+    std::cout << std::hex << "0x" << (pc - m_start_address) << "|0x" <<  pc << std::endl;
     handle_command(line);
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
@@ -43,7 +70,12 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
   uint64_t addr;
 
-  if (is_prefix(command, "cont")) {
+  if (is_prefix(command, "stepi")) {
+    std::cout << "single step" << std::endl;
+    single_step_instruction_with_breakpoint_check();
+    auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
+    m_debug_info.print_source(line_entry->file->path, line_entry->line);
+  } else if (is_prefix(command, "cont")) {
     std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
     continue_execution();
   } else if (is_prefix(command, "register")) {
@@ -91,23 +123,6 @@ void Debugger::set_breakpoint(std::intptr_t address) {
   Breakpoint bp(m_pid, addr);
   bp.enable();
   m_breakpoints[addr] = bp;
-}
-
-void Debugger::step_over_breakpoint() {
-  auto breakpoint_location = get_register_value(m_pid, Register::rip);
-
-  if (!m_breakpoints.count(breakpoint_location)) {
-    return;
-  }
-
-  auto &bp = m_breakpoints[breakpoint_location];
-
-  if (bp.is_enabled()) {
-    bp.disable();
-    set_register_value(m_pid, Register::rip, breakpoint_location);
-    ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
-    wait_for_signal();
-  }
 }
 
 void Debugger::wait_for_signal() {
