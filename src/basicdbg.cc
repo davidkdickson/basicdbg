@@ -6,6 +6,7 @@
 
 #include "debugger.h"
 #include "debug_info.h"
+#include "stepper.h"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
@@ -40,7 +41,8 @@ int main(int argc, char *argv[])
     uint64_t start_address = strtol(sLine.substr(0, 12).c_str(), &p, 16);
 
     DebugInfo debug_info(prog);
-    Debugger dbg {pid, start_address, debug_info};
+    Stepper stepper {pid, start_address, debug_info};
+    Debugger dbg {pid, start_address, debug_info, stepper};
     dbg.run();
   }
 

@@ -1,5 +1,5 @@
-#ifndef BREAKPOINT_CPP
-#define BREAKPOINT_CPP
+#ifndef BREAKPOINT_H
+#define BREAKPOINT_H
 
 #include <iostream>
 

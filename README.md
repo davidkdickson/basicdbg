@@ -24,7 +24,6 @@ ldd basicdbg
 - break point at address
 - step in
 - step over
-- step out
 - print back trace
 
 //  int wait_status;

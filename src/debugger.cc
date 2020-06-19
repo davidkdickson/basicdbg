@@ -6,6 +6,7 @@
 
 #include "../libs/linenoise/linenoise.h"
 #include "register.h"
+#include "stepper.h"
 
 std::vector<std::string> split(const std::string &s, char delimiter) {
   std::vector<std::string> out{};
@@ -24,33 +25,8 @@ bool is_prefix(const std::string &s, const std::string &of) {
   return std::equal(s.begin(), s.end(), of.begin());
 }
 
-void Debugger::single_step_instruction() {
-  ptrace(PTRACE_SINGLESTEP, m_pid, 0, 0);
-  wait_for_signal();
-}
-
-void Debugger::step_over_breakpoint() {
-  if (m_breakpoints.count(get_pc(m_pid))) {
-    auto& bp = m_breakpoints[get_pc(m_pid)];
-    if (bp.is_enabled()) {
-      bp.disable();
-      single_step_instruction();
-      bp.enable();
-    }
-  }
-}
-
-void Debugger::single_step_instruction_with_breakpoint_check() {
-    if (m_breakpoints.count(get_pc(m_pid))) {
-        step_over_breakpoint();
-    }
-    else {
-        single_step_instruction();
-    }
-}
-
 void Debugger::run() {
-   wait_for_signal();
+   m_stepper.wait_for_signal();
 
   char *line = nullptr;
 
@@ -72,7 +48,7 @@ void Debugger::handle_command(const std::string &line) {
 
   if (is_prefix(command, "stepi")) {
     std::cout << "single step" << std::endl;
-    single_step_instruction_with_breakpoint_check();
+    m_stepper.single_step_instruction_with_breakpoint_check(m_breakpoints);
     auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
     m_debug_info.print_source(line_entry->file->path, line_entry->line);
   } else if (is_prefix(command, "cont")) {
@@ -112,9 +88,9 @@ void Debugger::handle_command(const std::string &line) {
 }
 
 void Debugger::continue_execution() {
-  step_over_breakpoint();
+  m_stepper.step_over_breakpoint(m_breakpoints);
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
-  wait_for_signal();
+  m_stepper.wait_for_signal();
 }
 
 void Debugger::set_breakpoint(std::intptr_t address) {
@@ -123,52 +99,5 @@ void Debugger::set_breakpoint(std::intptr_t address) {
   Breakpoint bp(m_pid, addr);
   bp.enable();
   m_breakpoints[addr] = bp;
-}
-
-void Debugger::wait_for_signal() {
-  int wait_status;
-  auto options = 0;
-  waitpid(m_pid, &wait_status, options);
-
-  auto siginfo = get_signal_info();
-
-  switch (siginfo.si_signo) {
-    case SIGTRAP:
-      handle_sigtrap(siginfo);
-      break;
-    case SIGSEGV:
-      std::cout << "Yay, segfault. Reason: " << siginfo.si_code << std::endl;
-      break;
-    default:
-      std::cout << "Got signal " << strsignal(siginfo.si_signo) << std::endl;
-  }
-}
-
-siginfo_t Debugger::get_signal_info() {
-  siginfo_t info;
-  ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &info);
-  return info;
-}
-
-void Debugger::handle_sigtrap(siginfo_t info) {
-  switch (info.si_code) {
-    // one of these will be set if a breakpoint was hit
-    case SI_KERNEL:
-    case TRAP_BRKPT: {
-      auto pc = get_register_value(m_pid, Register::rip);
-      set_register_value(m_pid, Register::rip, pc - 1);
-      std::cout << "Hit breakpoint at address 0x" << std::hex
-                << (pc - 1 - m_start_address) << "|0x" << (pc - 1) << std::endl;
-       auto line_entry = m_debug_info.get_line_entry_from_pc(pc - m_start_address);
-       m_debug_info.print_source(line_entry->file->path, line_entry->line);
-      return;
-    }
-      // this will be set if the signal was sent by single stepping
-    case TRAP_TRACE:
-      return;
-    default:
-      std::cout << "Unknown SIGTRAP code " << info.si_code << std::endl;
-      return;
-  }
 }
 

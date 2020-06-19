@@ -4,12 +4,12 @@
 
 #include "breakpoint.h"
 #include "debug_info.h"
+#include "stepper.h"
 
 class Debugger {
   public:
-  Debugger(pid_t pid, uint64_t start_address, DebugInfo& debug_info)
-      :  m_pid{pid}, m_start_address{start_address}, m_debug_info(debug_info) {
-      }
+  Debugger(pid_t pid, uint64_t start_address, DebugInfo& debug_info, Stepper& stepper)
+      :  m_pid{pid}, m_start_address{start_address}, m_debug_info(debug_info), m_stepper(stepper) { }
 
   void run();
 
@@ -17,18 +17,13 @@ class Debugger {
   void handle_command(const std::string& line);
   void set_breakpoint(std::intptr_t addr);
   void continue_execution();
-  void wait_for_signal();
-  siginfo_t get_signal_info();
-  void handle_sigtrap(siginfo_t info);
-
-  void single_step_instruction();
-  void step_over_breakpoint();
-  void single_step_instruction_with_breakpoint_check();
 
   pid_t m_pid;
   uint64_t m_start_address;
-  DebugInfo& m_debug_info;
   std::unordered_map<std::intptr_t, Breakpoint> m_breakpoints;
+  DebugInfo& m_debug_info;
+  Stepper& m_stepper;
+
 
   inline static const char* PROMPT = "basicdbg> ";
 };
