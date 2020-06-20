@@ -21,10 +21,12 @@ ldd basicdbg
 
 ## MVP Functionality
 - break point at line
-- break point at address
-- step in
 - step over
+- step out
 - print back trace
+
+- better handling of start address
+- automatically start and main
 
 //  int wait_status;
 //  unsigned icounter = 0;

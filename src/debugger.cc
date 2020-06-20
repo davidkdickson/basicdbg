@@ -46,6 +46,22 @@ void Debugger::handle_command(const std::string &line) {
   auto command = args[0];
   uint64_t addr;
 
+
+  if (is_prefix(command, "step in")) {
+    m_stepper.step_in(m_breakpoints);
+    return;
+  }
+
+  if (is_prefix(command, "step over")) {
+    m_stepper.step_over();
+    return;
+  }
+
+  if (is_prefix(command, "step out")) {
+    m_stepper.step_out();
+    return;
+  }
+
   if (is_prefix(command, "stepi")) {
     std::cout << "single step" << std::endl;
     m_stepper.single_step_instruction_with_breakpoint_check(m_breakpoints);

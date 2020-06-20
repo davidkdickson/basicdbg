@@ -1,8 +1,27 @@
 #include "stepper.h"
+#include "register.h"
 
 #include <sys/ptrace.h>
 
 #include <iostream>
+
+void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+
+  auto line = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address)->line;
+
+  while (m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address)->line == line) {
+    single_step_instruction_with_breakpoint_check(breakpoints);
+  }
+
+  auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
+  m_debug_info.print_source(line_entry->file->path, line_entry->line);
+}
+
+void Stepper::step_over() {
+}
+
+void Stepper::step_out() {
+}
 
 void Stepper::wait_for_signal() {
   int wait_status;
