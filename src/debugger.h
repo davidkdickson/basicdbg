@@ -1,6 +1,6 @@
-#include <unordered_map>
-
 #include <signal.h>
+
+#include <unordered_map>
 
 #include "breakpoint.h"
 #include "debug_info.h"
@@ -19,6 +19,7 @@ class Debugger {
   pid_t m_pid;
   uint64_t m_start_address;
   std::unordered_map<std::intptr_t, Breakpoint> m_breakpoints;
+
   DebugInfo& m_debug_info;
   Stepper& m_stepper;
 
