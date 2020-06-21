@@ -11,10 +11,10 @@ linenoise.o:
 	gcc -g -c libs/linenoise/linenoise.c -o build/linenoise.o
 
 hello:
-	$(CC) -g examples/hello.cc -o examples/hello
+	$(CC) -g -fno-omit-frame-pointer examples/hello.cc -o examples/hello
 
 stack_trace:
-	$(CC) -g examples/stack_trace.cc -o examples/stack_trace
+	$(CC) -g -fno-omit-frame-pointer examples/stack_trace.cc -o examples/stack_trace
 clean:
 	rm build/*
 	rm basicdbg

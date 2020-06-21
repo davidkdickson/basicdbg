@@ -12,6 +12,7 @@ class Debugger {
       :  m_pid{pid}, m_start_address{start_address}, m_debug_info(debug_info), m_stepper(stepper) { }
 
   void run();
+  void print_backtrace();
 
   private:
   void handle_command(const std::string& line);

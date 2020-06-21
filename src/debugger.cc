@@ -77,6 +77,11 @@ void Debugger::handle_command(const std::string &line) {
     return;
   }
 
+  if (command == "bt") {
+    print_backtrace();
+    return;
+  }
+
   // if (is_prefix(args[1], "get")) {
   //   addr = get_register_value(m_pid, get_register_from_name(args[2]));
   //   std::cout << PROMPT << std::hex << "register " << args[2] << " : " << "0x" << addr - m_start_address << "|0x" << addr << std::endl;
@@ -94,4 +99,23 @@ void Debugger::handle_command(const std::string &line) {
   // }
 
   std::cerr << PROMPT << "unknown command\n";
+}
+
+void Debugger::print_backtrace() {
+  auto output_frame = [frame_number = 0] (auto&& func) mutable {
+        std::cout << "frame #" << frame_number++ << ": 0x" << dwarf::at_low_pc(func)
+                  << ' ' << dwarf::at_name(func) << std::endl;
+    };
+  auto current_func = m_debug_info.get_function_from_pc(get_pc(m_pid) - m_start_address);
+  output_frame(current_func);
+
+  auto frame_pointer = get_register_value(m_pid, Register::rbp);
+  auto return_address = read_memory(m_pid, frame_pointer+8);
+
+  while (dwarf::at_name(current_func) != "main") {
+    current_func = m_debug_info.get_function_from_pc(return_address - m_start_address);
+    output_frame(current_func);
+    frame_pointer = read_memory(m_pid, frame_pointer);
+    return_address = read_memory(m_pid, frame_pointer+8);
+  }
 }

@@ -7,14 +7,14 @@ dwarf::die DebugInfo::get_function_from_pc(uint64_t pc) {
   for (auto &cu : m_dwarf.compilation_units()) {
     if (die_pc_range(cu.root()).contains(pc)) {
       // Map PC to a line
-      auto &lt = cu.get_line_table();
-      auto it = lt.find_address(pc);
-
-      if (it == lt.end())
-        std::cout << "unknown" << std::endl;
-      else
-        std::cout << it->get_description().c_str() << std::endl;
-
+//      auto &lt = cu.get_line_table();
+//      auto it = lt.find_address(pc);
+//
+//      if (it == lt.end())
+//        std::cout << "unknown" << std::endl;
+//      else
+//        std::cout << it->get_description().c_str() << std::endl;
+//
       std::vector<dwarf::die> stack;
       if (find_pc(cu.root(), pc, &stack)) {
         bool first = true;
