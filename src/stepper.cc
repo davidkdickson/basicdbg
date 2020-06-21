@@ -23,7 +23,37 @@ void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints
   m_debug_info.print_source(line_entry->file->path, line_entry->line);
 }
 
-void Stepper::step_over() {
+void Stepper::step_over(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+  auto func = m_debug_info.get_function_from_pc(get_pc(m_pid) - m_start_address);
+  auto func_entry = at_low_pc(func);
+  auto func_end = at_high_pc(func);
+
+  auto line = m_debug_info.get_line_entry_from_pc(func_entry);
+  auto start_line = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
+
+  std::vector<std::intptr_t> to_delete{};
+
+  while (line->address < func_end) {
+    if (line->address != start_line->address && !breakpoints.count(line->address)) {
+      set_breakpoint(breakpoints, line->address);
+      to_delete.push_back(line->address + m_start_address);
+    }
+    ++line;
+  }
+
+  auto frame_pointer = get_register_value(m_pid, Register::rbp);
+  auto return_address = read_memory(m_pid, frame_pointer+8);
+
+  if (!breakpoints.count(return_address)) {
+    set_breakpoint(breakpoints, return_address - m_start_address);
+    to_delete.push_back(return_address);
+  }
+
+  continue_execution(breakpoints);
+
+  for (auto addr : to_delete) {
+    remove_breakpoint(breakpoints, addr);
+  }
 }
 
 void Stepper::step_out(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
@@ -31,6 +61,7 @@ void Stepper::step_out(std::unordered_map<std::intptr_t, Breakpoint>& breakpoint
   auto return_address = read_memory(m_pid, frame_pointer+8);
 
   bool should_remove_breakpoint = false;
+
   if (!breakpoints.count(return_address)) {
     set_breakpoint(breakpoints, return_address - m_start_address);
     should_remove_breakpoint = true;

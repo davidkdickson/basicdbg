@@ -24,6 +24,5 @@ class Debugger {
   DebugInfo& m_debug_info;
   Stepper& m_stepper;
 
-
   inline static const char* PROMPT = "basicdbg> ";
 };

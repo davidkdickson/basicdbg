@@ -52,7 +52,7 @@ void Debugger::handle_command(const std::string &line) {
 
   // next
   if (command == "n") {
-    m_stepper.step_over();
+    m_stepper.step_over(m_breakpoints);
     return;
   }
 

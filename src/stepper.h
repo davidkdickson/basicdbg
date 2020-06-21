@@ -28,7 +28,7 @@ class Stepper {
   void wait_for_signal();
 
   void step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
-  void step_over();
+  void step_over(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
   void step_out(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
 
   void continue_execution(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
