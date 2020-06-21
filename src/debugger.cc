@@ -3,9 +3,7 @@
 #include "../libs/linenoise/linenoise.h"
 
 #include "debugger.h"
-#include "register.h"
 #include "stepper.h"
-
 
 
 std::vector<std::string> split(const std::string &s, char delimiter) {
