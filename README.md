@@ -22,7 +22,6 @@ ldd basicdbg
 ## MVP Functionality
 - break point at line
 - step over
-- step out
 - print back trace
 
 - better handling of start address
