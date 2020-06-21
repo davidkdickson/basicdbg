@@ -20,7 +20,6 @@ extern Register get_register_from_name(const std::string& name);
 extern uint64_t get_register_value(pid_t pid, Register r);
 extern void set_register_value(pid_t pid, Register r, uint64_t value);
 extern uint64_t get_pc(pid_t pid);
-
 extern uint64_t read_memory(pid_t pid, uint64_t address);
 
 #endif
