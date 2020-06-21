@@ -16,13 +16,13 @@ class Stepper {
   DebugInfo& m_debug_info;
 
   void handle_sigtrap(siginfo_t info);
+  void single_step_instruction();
 
   public:
   Stepper(pid_t pid, uint64_t start_address, DebugInfo& debug_info)
       : m_pid{pid}, m_start_address{start_address}, m_debug_info(debug_info) {}
 
   void wait_for_signal();
-  void single_step_instruction();
 
   void continue_execution(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
   void step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
