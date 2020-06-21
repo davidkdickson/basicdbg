@@ -5,6 +5,12 @@
 
 #include <iostream>
 
+void Stepper::continue_execution(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+  step_over_breakpoint(breakpoints);
+  ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
+  wait_for_signal();
+}
+
 void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
 
   auto line = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address)->line;
@@ -20,7 +26,21 @@ void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints
 void Stepper::step_over() {
 }
 
-void Stepper::step_out() {
+void Stepper::step_out(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+  auto frame_pointer = get_register_value(m_pid, Register::rbp);
+  auto return_address = read_memory(m_pid, frame_pointer+8);
+
+  bool should_remove_breakpoint = false;
+  if (!breakpoints.count(return_address)) {
+    set_breakpoint(breakpoints, return_address - m_start_address);
+    should_remove_breakpoint = true;
+  }
+
+  continue_execution(breakpoints);
+
+  if (should_remove_breakpoint) {
+    remove_breakpoint(breakpoints, return_address);
+  }
 }
 
 void Stepper::wait_for_signal() {
@@ -52,8 +72,7 @@ void Stepper::handle_sigtrap(siginfo_t info) {
       set_register_value(m_pid, Register::rip, pc - 1);
       std::cout << "Hit breakpoint at address 0x" << std::hex
                 << (pc - 1 - m_start_address) << "|0x" << (pc - 1) << std::endl;
-      auto line_entry =
-          m_debug_info.get_line_entry_from_pc(pc - m_start_address);
+      auto line_entry = m_debug_info.get_line_entry_from_pc(pc - m_start_address);
       m_debug_info.print_source(line_entry->file->path, line_entry->line);
       return;
     }
@@ -71,8 +90,7 @@ void Stepper::single_step_instruction() {
   wait_for_signal();
 }
 
-void Stepper::step_over_breakpoint(
-    std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+void Stepper::step_over_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
   if (breakpoints.count(get_pc(m_pid))) {
     auto& bp = breakpoints[get_pc(m_pid)];
     if (bp.is_enabled()) {
@@ -82,8 +100,8 @@ void Stepper::step_over_breakpoint(
     }
   }
 }
-void Stepper::single_step_instruction_with_breakpoint_check(
-    std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
+
+void Stepper::single_step_instruction_with_breakpoint_check(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints) {
   if (breakpoints.count(get_pc(m_pid))) {
     step_over_breakpoint(breakpoints);
   } else {
@@ -91,3 +109,17 @@ void Stepper::single_step_instruction_with_breakpoint_check(
   }
 }
 
+void Stepper::remove_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr) {
+    if (breakpoints.at(addr).is_enabled()) {
+        breakpoints.at(addr).disable();
+    }
+    breakpoints.erase(addr);
+}
+
+void Stepper::set_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr) {
+  uint64_t address = addr + m_start_address;
+
+  Breakpoint bp(m_pid, address);
+  bp.enable();
+  breakpoints[address] = bp;
+};

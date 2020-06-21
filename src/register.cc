@@ -45,6 +45,10 @@ void set_register_value(pid_t pid, Register r, uint64_t value) {
   ptrace(PTRACE_SETREGS, pid, nullptr, &regs);
 }
 
+uint64_t read_memory(pid_t pid, uint64_t address) {
+    return ptrace(PTRACE_PEEKDATA, pid, address, nullptr);
+}
+
 uint64_t get_pc(pid_t pid) {
   return get_register_value(pid, Register::rip);
 }

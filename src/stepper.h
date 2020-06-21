@@ -24,14 +24,16 @@ class Stepper {
   void wait_for_signal();
   void single_step_instruction();
 
+  void continue_execution(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
   void step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
   void step_over();
-  void step_out();
+  void step_out(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
 
-  void step_over_breakpoint(
-      std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
-  void single_step_instruction_with_breakpoint_check(
-      std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
+  void step_over_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
+  void single_step_instruction_with_breakpoint_check(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints);
+
+  void remove_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr);
+  void set_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr);
 };
 
 #endif /* STEPPER_H */

@@ -47,18 +47,18 @@ void Debugger::handle_command(const std::string &line) {
   uint64_t addr;
 
 
-  if (is_prefix(command, "step in")) {
+  if (command == "stepin") {
     m_stepper.step_in(m_breakpoints);
     return;
   }
 
-  if (is_prefix(command, "step over")) {
+  if (command == "stepover") {
     m_stepper.step_over();
     return;
   }
 
-  if (is_prefix(command, "step out")) {
-    m_stepper.step_out();
+  if (command == "stepout") {
+    m_stepper.step_out(m_breakpoints);
     return;
   }
 
@@ -87,7 +87,7 @@ void Debugger::handle_command(const std::string &line) {
     addr = std::stol(addr_s, 0, 16);
     std::cout << PROMPT << "setting breakpoint at: 0x" << std::hex << addr << "|0x" << (addr + m_start_address)
         << std::endl;
-    set_breakpoint(addr);
+    m_stepper.set_breakpoint(m_breakpoints, addr);
   } else if (is_prefix(command, "function")) {
     std::string addr_s{args[1], 2};
     addr = std::stol(addr_s, 0, 16);
@@ -108,12 +108,3 @@ void Debugger::continue_execution() {
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
   m_stepper.wait_for_signal();
 }
-
-void Debugger::set_breakpoint(std::intptr_t address) {
-  uint64_t addr = address + m_start_address;
-
-  Breakpoint bp(m_pid, addr);
-  bp.enable();
-  m_breakpoints[addr] = bp;
-}
-
