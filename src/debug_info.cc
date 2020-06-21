@@ -105,3 +105,18 @@ void DebugInfo::print_source(const std::string &file_name, unsigned line, unsign
   std::cout << std::endl;
 }
 
+dwarf::line_table::entry DebugInfo::get_address_of_line(const std::string& file, unsigned line) {
+  for (const auto& cu : m_dwarf.compilation_units()) {
+    if (file == at_name(cu.root())) {
+      const auto& lt = cu.get_line_table();
+
+      for (const auto& entry : lt) {
+        if (entry.is_stmt && entry.line == line) {
+          return entry;
+        }
+      }
+    }
+  }
+  throw std::out_of_range{"Cannot find line"};
+}
+

@@ -35,6 +35,7 @@ class Stepper {
 
   void remove_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr);
   void set_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, std::intptr_t addr);
+  void set_breakpoint_at_line(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, const std::string& file, unsigned line);
 };
 
 #endif /* STEPPER_H */

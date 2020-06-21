@@ -122,4 +122,9 @@ void Stepper::set_breakpoint(std::unordered_map<std::intptr_t, Breakpoint>& brea
   Breakpoint bp(m_pid, address);
   bp.enable();
   breakpoints[address] = bp;
-};
+}
+
+void Stepper::set_breakpoint_at_line(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints, const std::string& file, unsigned line) {
+    auto entry = m_debug_info.get_address_of_line(file, line);
+    set_breakpoint(breakpoints, entry.address);
+}
