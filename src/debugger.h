@@ -15,8 +15,6 @@ class Debugger {
 
   private:
   void handle_command(const std::string& line);
-  void set_breakpoint(std::intptr_t addr);
-  void continue_execution();
 
   pid_t m_pid;
   uint64_t m_start_address;
