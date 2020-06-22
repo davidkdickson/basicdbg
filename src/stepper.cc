@@ -101,7 +101,7 @@ void Stepper::handle_sigtrap(siginfo_t info) {
     case TRAP_BRKPT: {
       auto pc = get_register_value(m_pid, Register::rip);
       set_register_value(m_pid, Register::rip, pc - 1);
-      std::cout << "Hit breakpoint at address 0x" << std::hex
+      std::cout << "Breakpoint at 0x" << std::hex
                 << (pc - 1 - m_start_address) << "|0x" << (pc - 1) << std::endl;
       auto line_entry = m_debug_info.get_line_entry_from_pc(pc - m_start_address);
       m_debug_info.print_source(line_entry->file->path, line_entry->line);

@@ -6,5 +6,7 @@ def Settings(**kwargs):
         '-Wno-long-long',
         '-Wno-variadic-macros',
         '-DNDEBUG',
-        '-x', 'c++',
+        '-x',
+        'c++',
+        '-std=c++17',
     ]}

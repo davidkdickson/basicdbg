@@ -29,8 +29,11 @@ void Debugger::run() {
   char *line = nullptr;
 
   while ((line = linenoise(PROMPT)) != nullptr) {
-    auto pc = get_pc(m_pid);
-    std::cout << std::hex << "0x" << (pc - m_start_address) << "|0x" <<  pc << std::endl;
+    if(strcmp(line, "quit") == 0) {
+      linenoiseFree(line);
+      return;
+    }
+
     handle_command(line);
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
@@ -56,35 +59,37 @@ void Debugger::handle_command(const std::string &line) {
     return;
   }
 
-  if (command == "stepout") {
+  // finish / step out
+  if (command == "f") {
     m_stepper.step_out(m_breakpoints);
     return;
   }
 
   // continue
   if (command == "c") {
-    std::cout << PROMPT << "continuing execution of process: " << std::dec << m_pid << std::endl;
+    std::cout << Debugger::GREEN
+        << "Continuing executions: " << std::dec << m_pid
+        << Debugger::RESET << std::endl;
     m_stepper.continue_execution(m_breakpoints);
     return;
   }
 
-  // break
+  // break at memory address or source line
   if (command == "b") {
     if (args[1][0] == '0' && args[1][1] == 'x') {
       std::string addr_s{args[1], 2};
       addr = std::stol(addr_s, 0, 16);
-      std::cout << PROMPT << "setting breakpoint at: 0x" << std::hex
-          << addr << "|0x" << (addr + m_start_address) << std::endl;
+      std::cout << std::hex << "Breakpoint at: " << Debugger::GREEN <<  "0x" << addr << "|0x" << (addr + m_start_address)
+          << Debugger::RESET << std::endl;
       m_stepper.set_breakpoint(m_breakpoints, addr);
     } else if (args[1].find(':') != std::string::npos) {
       auto file_and_line = split(args[1], ':');
-      std::cout << file_and_line[0] << std::endl;
-      std::cout << file_and_line[1] << std::endl;
       m_stepper.set_breakpoint_at_line(m_breakpoints, file_and_line[0], std::stoi(file_and_line[1]));
     }
     return;
   }
 
+  // pritn backtrace
   if (command == "bt") {
     print_backtrace();
     return;
