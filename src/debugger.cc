@@ -68,9 +68,8 @@ void Debugger::handle_command(const std::string &line) {
 
   // continue
   if (command == "c") {
-    std::cout << Colors::GREEN
-        << "Continuing executions: " << std::dec << m_pid
-        << Colors::RESET << std::endl;
+    std::cout << "Continuing execution: " << Colors::GREEN <<
+        std::dec << m_pid << Colors::RESET << std::endl;
     m_stepper.continue_execution(m_breakpoints);
     return;
   }
