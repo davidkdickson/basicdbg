@@ -111,7 +111,6 @@ void Stepper::handle_sigtrap(siginfo_t info) {
     case TRAP_TRACE:
       return;
     default:
-      std::cout << "Unknown SIGTRAP code " << info.si_code << std::endl;
       return;
   }
 }
