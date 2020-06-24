@@ -95,7 +95,7 @@ void Debugger::handle_command(const std::string &line) {
     return;
   }
 
-  std::cerr << PROMPT << "unknown command\n";
+  std::cerr << PROMPT << Colors::RED << "unknown command\n" << Colors::RESET;
 }
 
 void Debugger::print_backtrace() {
