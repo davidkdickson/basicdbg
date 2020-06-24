@@ -29,7 +29,6 @@ dwarf::line_table::iterator DebugInfo::get_line_entry_from_pc(uint64_t pc) {
       if (it == lt.end())
         std::cout << "unknown" << std::endl;
       else {
-        std::cout << it->get_description().c_str() << std::endl;
         return it;
       }
     }

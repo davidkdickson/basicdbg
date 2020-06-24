@@ -21,6 +21,7 @@ void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints
   }
 
   auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
+  std::cout << line_entry->get_description().c_str() << std::endl;
   m_debug_info.print_source(line_entry->file->path, line_entry->line);
 }
 
