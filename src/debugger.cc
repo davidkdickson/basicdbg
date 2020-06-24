@@ -79,8 +79,7 @@ void Debugger::handle_command(const std::string &line) {
     if (args[1][0] == '0' && args[1][1] == 'x') {
       std::string addr_s{args[1], 2};
       addr = std::stol(addr_s, 0, 16);
-      std::cout << std::hex << "Breakpoint at: " << Colors::GREEN <<  "0x" << addr << "|0x" << (addr + m_start_address)
-          << Colors::RESET << std::endl;
+      Colors::print_break(addr, addr + m_start_address);
       m_stepper.set_breakpoint(m_breakpoints, addr);
     } else if (args[1].find(':') != std::string::npos) {
       auto file_and_line = split(args[1], ':');

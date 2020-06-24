@@ -21,7 +21,9 @@ void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints
   }
 
   auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
-  std::cout << line_entry->get_description().c_str() << std::endl;
+
+  std::cout << Colors::BLUE << line_entry->get_description().c_str()
+      << Colors::RESET << std::endl;
   m_debug_info.print_source(line_entry->file->path, line_entry->line);
 }
 
@@ -103,9 +105,10 @@ void Stepper::handle_sigtrap(siginfo_t info) {
     case TRAP_BRKPT: {
       auto pc = get_register_value(m_pid, Register::rip);
       set_register_value(m_pid, Register::rip, pc - 1);
-      std::cout << "Breakpoint at: " << Colors::GREEN << "0x" << std::hex
-                << (pc - 1 - m_start_address) << "|0x" << (pc - 1) << " " << Colors::RESET ;
+      Colors::print_break(pc - 1 - m_start_address, pc - 1);
       auto line_entry = m_debug_info.get_line_entry_from_pc(pc - m_start_address);
+      std::cout << Colors::BLUE << line_entry->get_description().c_str()
+          << Colors::RESET << std::endl;
       m_debug_info.print_source(line_entry->file->path, line_entry->line);
       return;
     }
