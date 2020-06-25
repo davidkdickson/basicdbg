@@ -20,6 +20,7 @@ void Stepper::step_in(std::unordered_map<std::intptr_t, Breakpoint>& breakpoints
     single_step_instruction_with_breakpoint_check(breakpoints);
   }
 
+  Colors::print_location(get_pc(m_pid) - m_start_address, get_pc(m_pid));
   auto line_entry = m_debug_info.get_line_entry_from_pc(get_pc(m_pid) - m_start_address);
 
   std::cout << Colors::BLUE << line_entry->get_description().c_str()
