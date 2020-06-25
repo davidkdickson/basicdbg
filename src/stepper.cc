@@ -105,7 +105,7 @@ void Stepper::handle_sigtrap(siginfo_t info) {
     case TRAP_BRKPT: {
       auto pc = get_register_value(m_pid, Register::rip);
       set_register_value(m_pid, Register::rip, pc - 1);
-      Colors::print_break(pc - 1 - m_start_address, pc - 1);
+      Colors::print_location(pc - 1 - m_start_address, pc - 1);
       auto line_entry = m_debug_info.get_line_entry_from_pc(pc - m_start_address);
       std::cout << Colors::BLUE << line_entry->get_description().c_str()
           << Colors::RESET << std::endl;
