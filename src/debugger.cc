@@ -84,6 +84,7 @@ void Debugger::handle_command(const std::string &line) {
       m_stepper.set_breakpoint(m_breakpoints, addr);
     } else if (args[1].find(':') != std::string::npos) {
       auto file_and_line = split(args[1], ':');
+      std::cout << "Breakpoint at: " << Colors::GREEN << args[1] << Colors::RESET << std::endl;
       m_stepper.set_breakpoint_at_line(m_breakpoints, file_and_line[0], std::stoi(file_and_line[1]));
     }
     return;
