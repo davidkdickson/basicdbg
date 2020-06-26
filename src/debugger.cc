@@ -101,9 +101,11 @@ void Debugger::handle_command(const std::string &line) {
 
 void Debugger::print_backtrace() {
   auto output_frame = [frame_number = 0] (auto&& func) mutable {
-        std::cout << "frame #" << frame_number++ << ": 0x" << dwarf::at_low_pc(func)
-                  << ' ' << dwarf::at_name(func) << std::endl;
+        std::cout << "frame #" << frame_number++ << ": "
+            << Colors::GREEN << "0x" << dwarf::at_low_pc(func) << ' '
+            << Colors::BLUE << dwarf::at_name(func) << Colors::RESET << std::endl;
     };
+
   auto current_func = m_debug_info.get_function_from_pc(get_pc(m_pid) - m_start_address);
   output_frame(current_func);
 
