@@ -84,6 +84,11 @@ void Stepper::wait_for_signal() {
   auto options = 0;
   waitpid(m_pid, &wait_status, options);
 
+ if (WIFEXITED(wait_status)) {
+   std::cout << Colors::RED << "Debugger exited" << Colors::RESET << std::endl;
+   return;
+ }
+
   siginfo_t siginfo;
   ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &siginfo);
 
