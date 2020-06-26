@@ -1,5 +1,3 @@
-#include <iostream>
-
 void a() {
   int x = 1;
   x = 2;
@@ -11,21 +9,17 @@ void a() {
   x = 8;
   x = 9;
   x = 10;
-  std::cout << "end of a()" << std::endl;
 }
 
 void b() {
   a();
-  std::cout << "end of b()" << std::endl;
 }
 
 void c() {
   a();
-  std::cout << "end of c()" << std::endl;
 }
 
 int main() {
   b();
   c();
-  std::cout << "end of main()" << std::endl;
 }
