@@ -1,9 +1,21 @@
-# basicdbg
+# Basicdbg
 
-## Resources used
+Built myself a very basic debugger in an effort to refresh my understanding of c++.
+Code heavily based on the following blog [posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/)
+
+## Usage
+```
+basicdbg <program>
+```
+- (s) step in
+- (n) next / step over
+- (f) finish / step out
+- (b address) break at address
+- (b file:line_number) break at line number
+- (c) continue
+
+## Other useful resources
 - http://www.alexonlinux.com/how-debugger-works
-- https://blog.tartanllama.xyz/writing-a-linux-debugger-breakpoints/
-- http://www.alexonlinux.com/wp-content/uploads/2008/03/listing2.c
 - https://www.linuxjournal.com/article/6100
 - https://www.linuxjournal.com/article/6100
 - https://www.linuxjournal.com/article/6210
@@ -19,8 +31,6 @@ nm
 ldd basicdbg
 ```
 
-## MVP Functionality
-- step over
-
+## TODO
 - better handling of start address
 - automatically start and main
