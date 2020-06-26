@@ -14,7 +14,7 @@ basicdbg <program>
 - (b file:line_number) break at line number
 - (c) continue
 
-## Other useful resources
+## Useful resources
 - http://www.alexonlinux.com/how-debugger-works
 - https://www.linuxjournal.com/article/6100
 - https://www.linuxjournal.com/article/6100
