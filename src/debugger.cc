@@ -1,6 +1,5 @@
 #include <sstream>
-
-#include "../libs/linenoise/linenoise.h"
+#include <iostream>
 
 #include "debugger.h"
 #include "stepper.h"
@@ -19,29 +18,23 @@ std::vector<std::string> split(const std::string &s, char delimiter) {
   return out;
 }
 
-bool is_prefix(const std::string &s, const std::string &of) {
-  if (s.size() > of.size()) return false;
-  return std::equal(s.begin(), s.end(), of.begin());
-}
-
 void Debugger::run() {
    m_stepper.wait_for_signal();
 
-  char *line = nullptr;
+  std::string line;
 
   auto main_address = m_debug_info.get_address_of_function("main");
   m_stepper.set_breakpoint(m_breakpoints, main_address);
   m_stepper.continue_execution(m_breakpoints);
 
-  while ((line = linenoise(PROMPT)) != nullptr) {
-    if(strcmp(line, "q") == 0) {
-      linenoiseFree(line);
+  std::cout << Debugger::PROMPT;
+  while (std::getline(std::cin, line))
+  {
+    if(line == "q") {
       return;
     }
-
     handle_command(line);
-    linenoiseHistoryAdd(line);
-    linenoiseFree(line);
+    std::cout << Debugger::PROMPT;
   }
 
   return;
