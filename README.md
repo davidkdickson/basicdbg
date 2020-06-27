@@ -5,11 +5,10 @@ Code heavily based on the following blog [posts](https://blog.tartanllama.xyz/wr
 
 ## Quick start
 ```
-git clone --recursive git@github.com:davidkdickson/basicdbg.git
-make
-make examples
-
-./basicdbg examples/hello
+$ git clone --recursive git@github.com:davidkdickson/basicdbg.git
+$ cd basicdbg
+$ make
+$ ./basicdbg examples/hello
 ```
 
 ## Usage
