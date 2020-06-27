@@ -110,3 +110,16 @@ dwarf::line_table::entry DebugInfo::get_address_of_line(const std::string& file,
   throw std::out_of_range{"Cannot find line"};
 }
 
+uint64_t DebugInfo::get_address_of_function(const std::string& name) {
+    for (const auto& cu : m_dwarf.compilation_units()) {
+        for (const auto& die : cu.root()) {
+            if (die.has(dwarf::DW_AT::name) && at_name(die) == name) {
+                auto low_pc = at_low_pc(die);
+                auto entry = get_line_entry_from_pc(low_pc);
+                ++entry; //skip prologue
+                return entry->address;
+            }
+        }
+    }
+  throw std::out_of_range{"Cannot find function"};
+}

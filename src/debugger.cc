@@ -29,6 +29,10 @@ void Debugger::run() {
 
   char *line = nullptr;
 
+  auto main_address = m_debug_info.get_address_of_function("main");
+  m_stepper.set_breakpoint(m_breakpoints, main_address);
+  m_stepper.continue_execution(m_breakpoints);
+
   while ((line = linenoise(PROMPT)) != nullptr) {
     if(strcmp(line, "quit") == 0) {
       linenoiseFree(line);
