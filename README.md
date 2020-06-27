@@ -32,4 +32,4 @@ ldd basicdbg
 
 ## TODO
 - better handling of start address
-- automatically start at main
+- handle dependencies
