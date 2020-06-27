@@ -1,18 +1,19 @@
 # Basicdbg
 
-Built myself a very basic debugger in an effort to refresh my understanding of c++.
+Built myself a very basic debugger in an effort to refresh my understanding of C++.
 Code heavily based on the following blog [posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
 
 ## Usage
 ```
 basicdbg <program>
 ```
-- (s) step in
-- (n) next / step over
-- (f) finish / step out
-- (b address) break at address
-- (b file:line_number) break at line number
-- (c) continue
+- `s` step in
+- `n` next / step over
+- `f` finish / step out
+- `b address` break at address
+- `b file:line_number` break at line number
+- `c` continue
+- `q` quit
 
 ## Useful resources
 - http://www.alexonlinux.com/how-debugger-works
