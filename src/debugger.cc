@@ -34,7 +34,7 @@ void Debugger::run() {
   m_stepper.continue_execution(m_breakpoints);
 
   while ((line = linenoise(PROMPT)) != nullptr) {
-    if(strcmp(line, "quit") == 0) {
+    if(strcmp(line, "q") == 0) {
       linenoiseFree(line);
       return;
     }
