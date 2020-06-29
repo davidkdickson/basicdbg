@@ -3,8 +3,8 @@
 int main()
 {
   int x = 0;
-  x = 1;
-  x = 2;
+  x++;
+  x++;
 
   std::cout << "hellow world 1" << std::endl;
   std::cout << "hellow world 2" << std::endl;
