@@ -1,7 +1,7 @@
 # Basicdbg
 
 Built myself a very basic debugger in an effort to refresh my understanding of C++.
-Code heavily based on the following blog [posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
+Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
 
 ## Prerequisites
 - `gcc` (tested on version 9.3)
