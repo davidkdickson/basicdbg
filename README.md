@@ -15,7 +15,7 @@ $ make
 $ ./basicdbg examples/hello
 ```
 
-## Quick start - Docker
+## Docker
 ```
 $ docker build -t basickdbg .
 $ docker run -it /bin/bash
