@@ -87,7 +87,7 @@ void Debugger::handle_command(const std::string &line) {
     return;
   }
 
-  // pritn backtrace
+  // print backtrace
   if (command == "bt") {
     print_backtrace();
     return;
