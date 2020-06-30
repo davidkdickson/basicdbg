@@ -5,12 +5,20 @@ Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/wr
 
 ## Prerequisites
 - `gcc` (tested on version 9.3)
+- install with `sudo apt install build-essential`
 
 ## Quick start
 ```
 $ git clone --recursive git@github.com:davidkdickson/basicdbg.git
 $ cd basicdbg
 $ make
+$ ./basicdbg examples/hello
+```
+
+## Quick start - Docker
+```
+$ docker build -t basickdbg .
+$ docker run -it /bin/bash
 $ ./basicdbg examples/hello
 ```
 
