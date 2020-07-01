@@ -32,19 +32,16 @@ basicdbg <program>
 - `c` continue
 - `q` quit
 
-## Resources used
+## Useful articles
 - http://www.alexonlinux.com/how-debugger-works
 - https://www.linuxjournal.com/article/6100
 - https://www.linuxjournal.com/article/6210
 - https://jvns.ca/blog/2018/01/09/resolving-symbol-addresses/
 - https://amir.rachum.com/blog/2016/09/17/shared-libraries/
 
-### Commands
+### Useful commands
 ```
 objdump -f examples/hello       # outputs start address
 objdump -d examples/hello       # assembler sections of executable
 nm examples/hello               # another way at identifying address of main function
 ```
-
-## TODO
-- better handling of start address
