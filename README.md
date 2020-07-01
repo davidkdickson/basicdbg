@@ -27,8 +27,8 @@ basicdbg <program>
 - `s` step in
 - `n` next / step over
 - `f` finish / step out
-- `b address` break at address
-- `b file:line_number` break at line number
+- `b address` break at hex address. Example `b 0x11b5`
+- `b file:line_number` break at line number. Example `b examples/hello.cc:9`
 - `c` continue
 - `q` quit
 
