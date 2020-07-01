@@ -39,7 +39,7 @@ basicdbg <program>
 - https://jvns.ca/blog/2018/01/09/resolving-symbol-addresses/
 - https://amir.rachum.com/blog/2016/09/17/shared-libraries/
 
-### Useful commands
+## Useful supporting commands
 ```
 objdump -f examples/hello       # outputs start address
 objdump -d examples/hello       # assembler sections of executable
