@@ -1,7 +1,7 @@
 # Basicdbg
 
-Built myself a very basic debugger in an effort to refresh my understanding of C++.
-Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
+For learning purposes built myself a very basic debugger in an effort to refresh my
+understanding of C++. Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
 
 ## Getting started
 ### Ubuntu
@@ -24,7 +24,7 @@ $ ./basicdbg examples/hello
 ```
 basicdbg <program>
 ```
-- `s` step in
+- `s` step in, note cannot step in to shared library dependencies
 - `n` next / step over
 - `f` finish / step out
 - `b address` break at hex address, e.g. `b 0x11b5`
