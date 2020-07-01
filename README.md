@@ -3,19 +3,18 @@
 Built myself a very basic debugger in an effort to refresh my understanding of C++.
 Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
 
-## Prerequisites
-- `gcc` (tested on version 9.3)
-- install with `sudo apt install build-essential`
-
 ## Quick start
+### Ubuntu
 ```
 $ git clone --recursive git@github.com:davidkdickson/basicdbg.git
+$ sudo apt install build-essential      # installs gcc
 $ cd basicdbg
 $ make
 $ ./basicdbg examples/hello
 ```
 
-## Docker
+## Quick start
+### Docker
 ```
 $ docker build -t basickdbg .
 $ docker run -it /bin/bash
@@ -34,14 +33,14 @@ basicdbg <program>
 - `c` continue
 - `q` quit
 
-## Useful resources
+## Resources used
 - http://www.alexonlinux.com/how-debugger-works
 - https://www.linuxjournal.com/article/6100
 - https://www.linuxjournal.com/article/6210
 - https://jvns.ca/blog/2018/01/09/resolving-symbol-addresses/
 - https://amir.rachum.com/blog/2016/09/17/shared-libraries/
 
-## Useful commands
+### Commands
 ```
 objdump -f # overall file header includes start address
 objdump -h # section headers
