@@ -13,7 +13,6 @@ $ make
 $ ./basicdbg examples/hello
 ```
 
-## Quick start
 ### Docker
 ```
 $ docker build -t basickdbg .
