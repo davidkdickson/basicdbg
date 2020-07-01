@@ -7,7 +7,7 @@ Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/wr
 ### Ubuntu
 ```
 $ git clone --recursive git@github.com:davidkdickson/basicdbg.git
-$ sudo apt install build-essential      # installs gcc
+$ sudo apt install build-essential      # installs gcc, built using version 9.3
 $ cd basicdbg
 $ make
 $ ./basicdbg examples/hello
