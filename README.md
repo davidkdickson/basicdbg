@@ -41,11 +41,9 @@ basicdbg <program>
 
 ### Commands
 ```
-objdump -f # overall file header includes start address
-objdump -h # section headers
-objdump -d # assembler sections of executable sections
-nm
-ldd basicdbg
+objdump -f examples/hello       # outputs start address
+objdump -d examples/hello       # assembler sections of executable
+nm examples/hello               # another way at identifying address of main function
 ```
 
 ## TODO
