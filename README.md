@@ -3,7 +3,7 @@
 Built myself a very basic debugger in an effort to refresh my understanding of C++.
 Code heavily based on the following [blog posts](https://blog.tartanllama.xyz/writing-a-linux-debugger-setup/).
 
-## Quick start
+## Getting started
 ### Ubuntu
 ```
 $ git clone --recursive git@github.com:davidkdickson/basicdbg.git
@@ -20,7 +20,7 @@ $ docker run -it /bin/bash
 $ ./basicdbg examples/hello
 ```
 
-## Usage
+### Usage
 ```
 basicdbg <program>
 ```
