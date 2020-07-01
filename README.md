@@ -7,7 +7,7 @@ understanding of C++. Code heavily based on the following [blog posts](https://b
 ### Ubuntu
 ```
 $ git clone --recursive git@github.com:davidkdickson/basicdbg.git
-$ sudo apt install build-essential      # installs gcc, built using version 9.3
+$ sudo apt install build-essential      # installs gcc, tested on version 9.3
 $ cd basicdbg
 $ make
 $ ./basicdbg examples/hello
