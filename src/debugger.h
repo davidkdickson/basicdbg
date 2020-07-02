@@ -1,3 +1,5 @@
+#ifndef DEBUGGER_H
+#define DEBUGGER_H
 #include <signal.h>
 
 #include <unordered_map>
@@ -8,8 +10,12 @@
 
 class Debugger {
   public:
-  Debugger(pid_t pid, uint64_t start_address, DebugInfo& debug_info, Stepper& stepper)
-      :  m_pid{pid}, m_start_address{start_address}, m_debug_info(debug_info), m_stepper(stepper) { }
+  Debugger(pid_t pid, uint64_t start_address, DebugInfo& debug_info,
+           Stepper& stepper)
+      : m_pid{pid},
+        m_start_address{start_address},
+        m_debug_info(debug_info),
+        m_stepper(stepper) {}
 
   void run();
   void print_backtrace();
@@ -25,3 +31,4 @@ class Debugger {
 
   inline static const char* PROMPT = "(basicdbg) ";
 };
+#endif
